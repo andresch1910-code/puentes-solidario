@@ -230,7 +230,10 @@ legend { font-weight: 700; padding: 0 6px; font-size: 1.02rem; }
 .family-card .top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
 .family-card h3 { margin: 0; }
 .family-card .meta { color: var(--muted); font-size: .86rem; }
-.family-card .story { font-size: .92rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin: 0; }
+.family-card .story {
+  font-size: .92rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; margin: 0;
+  background: var(--ok-soft); border: 1px solid color-mix(in srgb, var(--ok) 25%, transparent); border-radius: 10px; padding: 10px 12px;
+}
 .needs-status { border-top: 1px solid var(--border); padding-top: 10px; margin-top: 2px; display: flex; flex-direction: column; gap: 6px; }
 .needs-status-title { font-size: .76rem; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; color: var(--muted); }
 .needs-status-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: .88rem; }
