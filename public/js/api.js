@@ -23,6 +23,14 @@ const listeners = new Set();
 export const onSession = (fn) => listeners.add(fn);
 const notify = () => listeners.forEach(fn => fn(session.user));
 
+// Hay internet pero el servidor no responde (apagado o reiniciándose).
+function serverDownMessage() {
+  const local = /^(localhost|127\.0\.0\.1|\[::1\])$|\.localhost$/.test(location.hostname);
+  return local
+    ? 'El servidor de Puente Solidario no está encendido en esta computadora. Ábrelo con iniciar-windows.bat (Windows) o iniciar-mac.command (Mac) y pulsa Reintentar.'
+    : 'No se pudo conectar con el servidor de Puente Solidario. Puede estar reiniciándose; intenta de nuevo en un momento.';
+}
+
 export async function api(path, { method = 'GET', body, exp = false, raw = false } = {}) {
   const headers = {};
   const token = exp ? session.expToken : session.token;
@@ -32,7 +40,7 @@ export async function api(path, { method = 'GET', body, exp = false, raw = false
   try {
     res = await fetch(`/api${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
   } catch {
-    const e = new Error('Sin conexión. Revisa tu internet e intenta de nuevo.');
+    const e = new Error(navigator.onLine ? serverDownMessage() : 'Sin conexión. Revisa tu internet e intenta de nuevo.');
     e.network = true;
     throw e;
   }
