@@ -170,26 +170,48 @@ export function bars(items, { label = 'label', value = 'value', icon = null, col
     <div class="track"><i style="width:${(i[value] / max) * 100}%;${color ? `background:${color}` : ''}"></i></div><b>${fmtNum(i[value])}</b></div>`).join('')}</div>`;
 }
 
-export function needsIcons(needs, limit = 5) {
-  const pending = needs.filter(n => n.missing > 0);
-  return `<div class="need-mini">${pending.slice(0, limit).map(n => `<span>${esc(n.icon)} ${esc(n.label)}</span>`).join('')}${pending.length > limit ? `<span>+${pending.length - limit}</span>` : ''}</div>`;
-}
-
 export function familyCard(f, m) {
   const aff = f.affectations.map(k => m.affectations.find(a => a.key === k)?.label).filter(Boolean);
   return `<a class="card family-card" href="#/familia/${esc(f.code)}">
     <div class="top">
-      <div><h3>${esc(f.family_name)}</h3>
-      <div class="meta">📍 ${esc(f.community)}, ${esc(f.district)} · 👥 ${f.adults + f.minors} persona${f.adults + f.minors === 1 ? '' : 's'}${f.minors ? ` · ${f.minors} menor${f.minors > 1 ? 'es' : ''}` : ''}</div></div>
+      <h3>${esc(f.family_name)}</h3>
       <span class="badge ${f.priority_level.key}" title="Prioridad calculada">${f.priority_level.label}</span>
     </div>
-    <div>${aff.slice(0, 2).map(a => `<span class="tag">${esc(a)}</span>`).join('')}<span class="badge ok">✓ Verificada</span></div>
     ${f.story ? `<p class="story">“${esc(f.story)}”</p>` : ''}
-    ${needsIcons(f.needs, 4)}
+    <div class="meta">📍 ${esc(f.community)}, ${esc(f.district)} · 👥 ${f.adults + f.minors} persona${f.adults + f.minors === 1 ? '' : 's'}${f.minors ? ` · ${f.minors} menor${f.minors > 1 ? 'es' : ''}` : ''}</div>
+    <div>${aff.slice(0, 2).map(a => `<span class="tag">${esc(a)}</span>`).join('')}<span class="badge ok">✓ Verificada</span></div>
     <div><div class="row between small muted"><span>Necesidades cubiertas</span><span>${f.progress}%</span></div>
     <div class="progress"><i style="width:${f.progress}%"></i></div></div>
     <div class="row between small muted"><span>${f.donations.count ? `💚 ${f.donations.count} aporte${f.donations.count > 1 ? 's' : ''}` : 'Aún sin aportes'}</span><span>${esc(f.code)}</span></div>
+    ${needsStatus(f.needs)}
   </a>`;
+}
+
+/** Estado de cada necesidad: pendiente, parcial, en camino (alguien la lleva) o cubierta. */
+export function needStatus(n) {
+  if (n.missing === 0) return { key: 'ok', label: 'Cubierta ✓' };
+  if (n.claimed) return { key: 'warn', label: `🚚 En camino${n.claimed_name ? ` · ${n.claimed_name}` : ''}` };
+  if (n.fulfilled > 0) return { key: 'primary', label: `Parcial · ${n.fulfilled} de ${n.quantity}` };
+  return { key: 'crit', label: `${n.missing === 1 ? 'Falta' : 'Faltan'} ${n.missing} ${unitFor(n.missing, n.unit)}` };
+}
+
+const SINGULAR = {
+  unidades: 'unidad', galones: 'galón', kits: 'kit', latas: 'lata', bolsas: 'bolsa', paquetes: 'paquete', láminas: 'lámina',
+  sesiones: 'sesión', jornadas: 'jornada', visitas: 'visita', viajes: 'viaje', meses: 'mes',
+};
+export const unitFor = (qty, unit) => (qty === 1 && SINGULAR[unit]) || unit;
+
+function needsStatus(needs, limit = 5) {
+  if (!needs.length) return '';
+  // Primero lo que falta, al final lo ya cubierto.
+  const order = { crit: 0, primary: 1, warn: 2, ok: 3 };
+  const rows = needs.map(n => ({ n, s: needStatus(n) })).sort((a, b) => order[a.s.key] - order[b.s.key]);
+  return `<div class="needs-status">
+    <div class="needs-status-title">Sus necesidades</div>
+    ${rows.slice(0, limit).map(({ n, s }) => `<div class="needs-status-row">
+      <span class="needs-status-name">${esc(n.icon)} ${esc(n.label)}</span><span class="badge ${s.key}">${esc(s.label)}</span></div>`).join('')}
+    ${rows.length > limit ? `<div class="small muted">+${rows.length - limit} más · ver detalle</div>` : ''}
+  </div>`;
 }
 
 export const emergencyBlock = () => `
