@@ -1,0 +1,30 @@
+# Blueprint de Render: crea el servicio web con disco persistente para la base de datos y las fotos.
+# En Render: New → Blueprint → elige este repositorio. Te pedirá ADMIN_EMAIL y ADMIN_PASSWORD.
+services:
+  - type: web
+    name: puente-solidario
+    runtime: node
+    plan: starter            # el disco persistente requiere un plan de pago (el gratuito borra los datos)
+    region: virginia
+    buildCommand: npm ci --omit=dev --no-fund --no-audit
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: DATA_DIR
+        value: /var/data
+      - key: TRUST_PROXY
+        value: "1"
+      - key: APP_SECRET
+        generateValue: true
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+    disk:
+      name: datos
+      mountPath: /var/data
+      sizeGB: 1

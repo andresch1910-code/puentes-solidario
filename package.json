@@ -1,0 +1,20 @@
+{
+  "name": "puente-solidario",
+  "version": "1.0.0",
+  "description": "Plataforma comunitaria para conectar familias afectadas por emergencias con voluntarios, donantes, centros de acopio e información oficial.",
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "start": "node --disable-warning=ExperimentalWarning server/index.js",
+    "dev": "node --disable-warning=ExperimentalWarning --watch server/index.js",
+    "seed": "node --disable-warning=ExperimentalWarning server/seed.js --reset"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "leaflet": "1.9.4",
+    "leaflet.markercluster": "1.5.3"
+  }
+}

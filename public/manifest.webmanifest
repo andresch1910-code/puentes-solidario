@@ -1,0 +1,22 @@
+{
+  "name": "Puente Solidario Panamá",
+  "short_name": "Puente Solidario",
+  "description": "Conecta a familias afectadas por emergencias con voluntarios, donantes, centros de acopio e información oficial.",
+  "lang": "es",
+  "start_url": "/#/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#0b3d91",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ],
+  "shortcuts": [
+    { "name": "Necesito ayuda", "url": "/#/necesito-ayuda" },
+    { "name": "Mi solicitud", "url": "/#/mi-solicitud" },
+    { "name": "Registrar visita", "url": "/#/registrar-visita" }
+  ]
+}
